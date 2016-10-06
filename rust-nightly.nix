@@ -12,6 +12,10 @@ let
 
   thisSys = convertPlatform stdenv.system;
 
+  defaultDateFile = builtins.fetchurl
+    "https://static.rust-lang.org/dist/channel-rust-nightly-date.txt";
+  defaultDate = lib.removeSuffix "\n" (builtins.readFile defaultDateFile);
+
   mkUrl = { pname, archive, date, system }:
     "${archive}/${date}/${pname}-nightly-${system}.tar.gz";
 
@@ -23,13 +27,13 @@ let
     in fetchurl { inherit url sha256; };
 
   generic = { pname, archive, exes }:
-      { date, system ? thisSys, ... } @ args:
+      { date ? defaultDate, system ? thisSys, ... } @ args:
       stdenv.mkDerivation rec {
     name = "${pname}-${version}";
     version = "nightly-${date}";
     # TODO meta;
     outputs = [ "out" "doc" ];
-    src = fetch (args // { inherit pname archive system; });
+    src = fetch (args // { inherit pname archive system date; });
     nativeBuildInputs = [ rsync ];
     dontStrip = true;
     installPhase = ''
