@@ -18,7 +18,7 @@ system config:
 ```nix
 {
   nixpkgs.config.packageOverrides = pkgs: {
-    rustNightly = pkgs.callPackage ./rust-nightly.nix {};
+    rustNightly = pkgs.callPackage /path/to/rust-nightly-nix {};
   };
 }
 ```
@@ -52,7 +52,7 @@ I also added an alias to my `packageOverrides`:
 ```nix
 {
   nixpkgs.config.packageOverrides = pkgs: rec {
-    rustNightly = pkgs.callPackage ./rust-nightly.nix {};
+    rustNightly = pkgs.callPackage /path/to/rust-nightly-nix {};
     rustLatest = rustNightly.rust {};
   };
 }
