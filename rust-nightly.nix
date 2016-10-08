@@ -74,14 +74,14 @@ in rec {
     '';
   };
 
-  rust-std = { date, system ? thisSys, ... } @ args:
+  rust-std = { date ? defaultDate, system ? thisSys, ... } @ args:
       stdenv.mkDerivation rec {
     # Strip install.sh, etc
     pname = "rust-std";
     version = "nightly-${date}";
     name = "${pname}-${version}-${system}";
     src = fetch (args // {
-      inherit pname system;
+      inherit pname date system;
       archive = "https://static.rust-lang.org/dist";
     });
     installPhase = ''
