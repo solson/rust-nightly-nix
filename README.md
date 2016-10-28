@@ -12,8 +12,14 @@ official packaging.
 
 ### Setup
 
-The way I use the expression is to have something like the following in my NixOS
-system config:
+Download `default.nix` file onto your system somewhere. The location of that
+file is your `/path/to/rust-nightly-nix`. It doesn't have to be called
+`default.nix` unless you want the path to be the directory containing it.
+
+#### NixOS System Setup
+
+You can install this globally by adding it as an override in the system's
+configuration at `/etc/nixos/configuration.nix`.
 
 ```nix
 {
@@ -23,9 +29,18 @@ system config:
 }
 ```
 
-In reality, my package overrides are split across multiple files, since I have
-more than just this one, but the idea is the same. It should also be possible to
-set this up with a user-local nixpkgs config.
+#### Local User Setup
+
+You can also set this up specifically for a single user by adding it to that
+user's nix configuration, located at `$HOME/.nixpkgs/config.nix`.
+
+```nix
+{
+  packageOverrides = pkgs: {
+    rustNightly = pkgs.callPackage /path/to/rust-nightly-nix {};
+  };
+}
+```
 
 ### Examples
 
