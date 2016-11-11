@@ -88,6 +88,27 @@ I also added an alias to my `packageOverrides`:
 
 So I can just run `nix-shell -p rustLatest` to work with my nightly projects.
 
+## Compile with musl
+
+```nix
+rustPackages = pkgs.callPackage rustNightlyNixRepo { };
+
+cargoNightly = rustPackages.cargo { date = "2016-11-09"; };
+rustcNightly = rustPackages.rustc {};
+
+rustNightly = rustPackages.rustcWithSysroots {
+  rustc = rustcNightly;
+  sysroots = [
+    (rustPackages.rust-std { })
+    (rustPackages.rust-std { system = "x86_64-unknown-linux-musl"; })
+  ];
+};
+```
+
+Now you can build `cargo build --target x86_64-unknown-linux-musl` :)
+
+Note: of course the `musl` package needs to be installed too ;-)
+
 ## License
 
 Licensed under either of
