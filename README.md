@@ -29,6 +29,19 @@ configuration at `/etc/nixos/configuration.nix`.
 }
 ```
 
+Alternatively you can define this repo directy within your `configuration.nix`:
+
+```nix
+rustNightlyNixRepo = pkgs.fetchFromGitHub {
+   owner = "solson";
+   repo = "rust-nightly-nix";
+   rev = "9e09d579431940367c1f6de9463944eef66de1d4";
+   sha256 = "03zkjnzd13142yla52aqmgbbnmws7q8kn1l5nqaly22j31f125xy";
+};
+
+rustPackages = pkgs.callPackage rustNightlyNixRepo { };
+```
+
 #### Local User Setup
 
 You can also set this up specifically for a single user by adding it to that
