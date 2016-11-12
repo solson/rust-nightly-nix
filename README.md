@@ -32,14 +32,16 @@ configuration at `/etc/nixos/configuration.nix`.
 Alternatively you can define this repo directy within your `configuration.nix`:
 
 ```nix
-rustNightlyNixRepo = pkgs.fetchFromGitHub {
-   owner = "solson";
-   repo = "rust-nightly-nix";
-   rev = "9e09d579431940367c1f6de9463944eef66de1d4";
-   sha256 = "03zkjnzd13142yla52aqmgbbnmws7q8kn1l5nqaly22j31f125xy";
-};
+{
+  rustNightlyNixRepo = pkgs.fetchFromGitHub {
+     owner = "solson";
+     repo = "rust-nightly-nix";
+     rev = "9e09d579431940367c1f6de9463944eef66de1d4";
+     sha256 = "03zkjnzd13142yla52aqmgbbnmws7q8kn1l5nqaly22j31f125xy";
+  };
 
-rustPackages = pkgs.callPackage rustNightlyNixRepo { };
+  rustPackages = pkgs.callPackage rustNightlyNixRepo { };
+}
 ```
 
 #### Local User Setup
@@ -91,18 +93,20 @@ So I can just run `nix-shell -p rustLatest` to work with my nightly projects.
 ## Compile with musl
 
 ```nix
-rustPackages = pkgs.callPackage rustNightlyNixRepo { };
+{
+  rustPackages = pkgs.callPackage rustNightlyNixRepo { };
 
-cargoNightly = rustPackages.cargo { date = "2016-11-09"; };
-rustcNightly = rustPackages.rustc {};
+  cargoNightly = rustPackages.cargo { date = "2016-11-09"; };
+  rustcNightly = rustPackages.rustc {};
 
-rustNightly = rustPackages.rustcWithSysroots {
-  rustc = rustcNightly;
-  sysroots = [
-    (rustPackages.rust-std { })
-    (rustPackages.rust-std { system = "x86_64-unknown-linux-musl"; })
-  ];
-};
+  rustNightly = rustPackages.rustcWithSysroots {
+    rustc = rustcNightly;
+    sysroots = [
+      (rustPackages.rust-std { })
+      (rustPackages.rust-std { system = "x86_64-unknown-linux-musl"; })
+    ];
+  };
+}
 ```
 
 Now you can build `cargo build --target x86_64-unknown-linux-musl` :)
