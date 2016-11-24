@@ -12,11 +12,11 @@ let
 
   thisSys = convertPlatform stdenv.system;
 
-  channel = if args.stableVersion != null then "stable" else "nightly";
+  channel = if (args.stableVersion or null) != null then "stable" else "nightly";
   stableVersion =
     if channel == "stable"
-    then args.stableVersion or (abort "If the stable release channel is selected, you must provide a version number")
-    else "BOGUS_STABLE_VERSION";
+    then args.stableVersion
+    else (abort "rust-nightly-nix: impossible");
 
   defaultDateFile = builtins.fetchurl
     "https://static.rust-lang.org/dist/channel-rust-${channel}-date.txt";
