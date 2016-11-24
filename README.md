@@ -1,32 +1,25 @@
 # A Nix expression for nightly Rust versions
 
-This is useful for working with the latest Rust nightly (or the nightly from a
-specific date) on [NixOS]. Notably, it uses Nix's `builtins.fetchurl` feature to
-avoid the need to specify source hashes manually. This feature is banned in
-[nixpkgs], so this expression has to exist outside of it.
+This is useful for working with the latest Rust nightly (or the nightly from a specific date) on [NixOS].
+Notably, it uses Nix's `builtins.fetchurl` feature to avoid the need to specify source hashes manually.
+This feature is banned in [nixpkgs], so this expression has to exist outside of it.
 
-Essentially, this expression is convenient for development but unsuitable for
-official packaging.
+Essentially, this expression is convenient for development but unsuitable for official packaging.
 
 ## Usage
 
 ### Invocation
 
-The contents of `default.nix` is a function from a set of common nix packages
-to a set of functions. `default.nix` is meant to be called via the callPackage
-function. The functions it produces are as follows.
+The contents of `default.nix` is a function from a set of common nix packages to a set of functions.
+`default.nix` is meant to be called via the callPackage function. The functions it produces are as follows.
 
 #### `rustc`
 
-`rustc` is a function from an optional `date` (defaults to latest), and
-an optional `system` (defaults to the system nix is installed on) to
-a derivation for the rust compiler. If you wish, you can provide an
-optional hash argument to specify exactly what the blob that 
-rust-nightly-nix downloads should hash to. If no hash is provided,
-rust-nightly-nix will first download the hash from Mozilla, then
-use the downloaded hash as a checksum for the actual payload.
+`rustc` is a function from an optional `date` (defaults to latest), and an optional `system` (defaults to the system nix is installed on) to a derivation for the rust compiler.
+If you wish, you can provide an optional hash argument to specify exactly what the blob that rust-nightly-nix downloads should hash to.
+If no hash is provided, rust-nightly-nix will first download the hash from Mozilla, then use the downloaded hash as a checksum for the actual payload.
 
-For example, 
+For example,
 
 ```nix
 {
@@ -47,12 +40,9 @@ provides a hash to add some security to the build process.
 
 #### `rustcWithSysroots`
 
-`rustcWithSysroots` takes rustc as an argument, plus an optional set of
-derivations to be put in scope for the build of rustc. This is particularly
-useful if you want to make `rust-std` avalable to `rustc`. For example
-you might invoke `rustcWithSysroots` in the following way in order to
-make different instances of `rust-std` avalable during the use of
-`rustc`.
+`rustcWithSysroots` takes rustc as an argument, plus an optional set of derivations to be put in scope for the build of rustc.
+This is particularly useful if you want to make `rust-std` avalable to `rustc`.
+For example you might invoke `rustcWithSysroots` in the following way in order to make different instances of `rust-std` avalable during the use of `rustc`.
 
 ```nix
 {
@@ -86,14 +76,12 @@ and `rustdoc`.
 
 ### Setup
 
-Download `default.nix` file onto your system somewhere. The location of that
-file is your `/path/to/rust-nightly-nix`. It doesn't have to be called
-`default.nix` unless you want the path to be the directory containing it.
+Download `default.nix` file onto your system somewhere. The location of that file is your `/path/to/rust-nightly-nix`.
+It doesn't have to be called `default.nix` unless you want the path to be the directory containing it.
 
 #### NixOS System Setup
 
-You can install this globally by adding it as an override in the system's
-configuration at `/etc/nixos/configuration.nix`.
+You can install this globally by adding it as an override in the system's configuration at `/etc/nixos/configuration.nix`.
 
 ```nix
 {
@@ -120,8 +108,7 @@ Alternatively you can define this repo directy within your `configuration.nix`:
 
 #### Local User Setup
 
-You can also set this up specifically for a single user by adding it to that
-user's nix configuration, located at `$HOME/.nixpkgs/config.nix`.
+You can also set this up specifically for a single user by adding it to that user's nix configuration, located at `$HOME/.nixpkgs/config.nix`.
 
 ```nix
 {
@@ -143,11 +130,9 @@ nix-shell -p 'rustNightly.rust { date = "2016-01-01"; }'
 nix-shell -p 'rustNightly.rust {}'
 ```
 
-But there are more derivations in `rustNightly` than just `rust`. Check out the
-source for the full list. It's not too complicated.
+But there are more derivations in `rustNightly` than just `rust`. Check out the source for the full list. It's not too complicated.
 
-You could also add any of these to your `systemPackages` or user environment
-(with `nix-env`).
+You could also add any of these to your `systemPackages` or user environment (with `nix-env`).
 
 ## Tip
 
@@ -197,9 +182,7 @@ Licensed under either of
 
 ### Contribution
 
-Unless you explicitly state otherwise, any contribution intentionally submitted
-for inclusion in the work by you shall be dual licensed as above, without any
-additional terms or conditions.
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you shall be dual licensed as above, without any additional terms or conditions.
 
 
 [NixOS]: http://nixos.org/
