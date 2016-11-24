@@ -29,13 +29,14 @@ use the downloaded hash as a checksum for the actual payload.
 For example, 
 
 ```nix
-let funs = callPackage "/path/to/rust-nightly.nix" { };
-  
-    rustcNightly = funs.rustc {
-      date = "2016-06-09";
-      hash = "1p0xkpfk66jq0iladqfrhqk1zc1jr9n2v2lqyf7jjbrmqx2ja65i";
-    };
- in whatever
+{
+  funs = callPackage "/path/to/rust-nightly.nix" { };
+
+  rustcNightly = funs.rustc {
+    date = "2016-06-09";
+    hash = "1p0xkpfk66jq0iladqfrhqk1zc1jr9n2v2lqyf7jjbrmqx2ja65i";
+  };
+}
 ```
 
 provides a hash to add some security to the build process.
@@ -54,6 +55,7 @@ make different instances of `rust-std` avalable during the use of
 `rustc`.
 
 ```nix
+{
   rustNightlyWithi686 = funs.rustcWithSysroots {
     rustc = rustcNightly;
     sysroots = [
@@ -70,6 +72,7 @@ make different instances of `rust-std` avalable during the use of
       })
     ];
   };
+}
 ```
 
 #### `rust-std`
