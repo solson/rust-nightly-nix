@@ -24,11 +24,11 @@ You can fetch the whole repo and use it with something like:
 ```
 
 Or you can just download `default.nix` file onto your system somewhere, and do:
-``
+```nix
 {
   rustPackages = pkgs.callPackage /path/to/rust-nightly-nix { };
 }
-``
+```
 Note the the `default.nix` is a special name and thus you can use the path to be the directory containing it.
 
 
