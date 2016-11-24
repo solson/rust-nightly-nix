@@ -16,7 +16,7 @@ The contents of `default.nix` is a function from a set of common nix packages
 to a set of functions. `default.nix` is meant to be called via the callPackage
 function. The functions it produces are as follows.
 
-#### rustc
+#### `rustc`
 
 `rustc` is a function from an optional `date` (defaults to latest), and
 an optional `system` (defaults to the system nix is installed on) to
@@ -40,11 +40,11 @@ let funs = callPackage "/path/to/rust-nightly.nix" { };
 
 provides a hash to add some security to the build process.
 
-#### cargo
+#### `cargo`
 
 `cargo` has the same type as `rustc`.
 
-#### rustcWithSysroots
+#### `rustcWithSysroots`
 
 `rustcWithSysroots` takes rustc as an argument, plus an optional set of
 derivations to be put in scope for the build of rustc. This is particularly
@@ -72,7 +72,7 @@ make different instances of `rust-std` avalable during the use of
   };
 ```
 
-#### rust-std
+#### `rust-std`
 
 `rust-std` has the same type as `rustc`.
 
