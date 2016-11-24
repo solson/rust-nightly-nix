@@ -76,7 +76,7 @@ make different instances of `rust-std` avalable during the use of
 
 `rust-std` has the same type as `rustc`.
 
-#### rust
+#### `rust`
 
 `rust` has the same type as `rustc`. It is a wrapper for `rustc`, `cargo`,
 and `rustdoc`.
