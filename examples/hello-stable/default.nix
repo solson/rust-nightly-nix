@@ -1,5 +1,5 @@
 #
-# File ${RUST_NIGHTLY_NIX_HOME}/examples/hello/default.nix
+# File ${RUST_NIGHTLY_NIX_HOME}/examples/hello-stable/default.nix
 #
 # A hello-world rust project using rust-nightly-nix to manage
 # rust and cargo.
