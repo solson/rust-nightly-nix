@@ -36,7 +36,10 @@ Note the the `default.nix` is a special name and thus you can use the path to be
 
 `default.nix` is structure like a normal package in Nixpkgs in that it is a function from a attrset of package, suitable for calling with `callPackage` as show above.
 Unlike a normal package, however, it is a function not to a single derivation but two a set of functions.
-The functions it produces are as follows.
+`default.nix` accepts a single optional parameter in addition to the attrset which must be provided via `callPackage`: `stableVersion`.
+If `stableVersion` is not provided rust-nightly-nix will install the nightly toolchain, but if it is rust-nightly-nix will install the stable toolchain which corrisponds to the provided version.
+An example of what using this feature looks like can be found in `/examples/hello-stable/default.nix`.
+The functions `default.nix` produces after it is called are as follows.
 
 ### `rustc`
 
@@ -44,7 +47,7 @@ The functions it produces are as follows.
 `date` determines which nightly to download (defaults to latest date where a nightly was successfully built).
 `system` is the system the compiler *runs* on (defaults to the system Nix is installed on).
 This is an LLVM- (and Rust-) style system name, not Nix-style.
-`hash` is the expect hash of the nightly download.
+`hash` is the expected hash of the nightly download.
 The default here is somewhat complex, and marginally better than just an unchecked download.
 If no hash is provided, rust-nightly-nix will first download the hash from Mozilla (an unchecked download), then use the downloaded hash to verify the compiler download.
 That way, the compiler download is always verified with some hash.
