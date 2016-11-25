@@ -1,6 +1,6 @@
 [package]
 name = "hello-stable"
 version = "0.1.0"
-authors = ["Ethan Pailes <ethanpailes@gmail.com>"]
+authors = ["rust-nightly-nix maintainers"]
 
 [dependencies]
