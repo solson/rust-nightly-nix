@@ -16,24 +16,39 @@ let
     "https://static.rust-lang.org/dist/channel-rust-nightly-date.txt";
   defaultDate = lib.removeSuffix "\n" (builtins.readFile defaultDateFile);
 
-  mkUrl = { pname, archive, date, system }:
-    "${archive}/${date}/${pname}-nightly-${system}.tar.gz";
+  dispatchUrl = { pname, archive, channel, system }: channelArgs: ({ # Switch
+    nightly = { date ? defaultDate }: {
+      url = "${archive}/${date}/${pname}-nightly-${system}.tar.gz";
+      version = "nightly-${date}";
+    };
+    stable = { version }: {
+      url = "${archive}/${pname}-${version}-${system}.tar.gz";
+      version = "stable-${version}";
+    };
+  }.${channel}) channelArgs;
 
-  fetch = args: let
-      url = mkUrl { inherit (args) pname archive date system; };
-      download = builtins.fetchurl (url + ".sha256");
-      contents = builtins.readFile download;
-      sha256 = args.hash or (lib.head (lib.strings.splitString " " contents));
-    in fetchurl { inherit url sha256; };
+  dispatchFetch = { pname, archive }: args: rec {
+    inherit (args) channel;
+    system = args.system or thisSys;
+    inherit (dispatchUrl
+        { inherit pname archive channel system; }
+        (builtins.removeAttrs args [ "channel" "system" "sha256" ]))
+      url version;
+    sha256 = let
+        download = builtins.fetchurl (url + ".sha256");
+        contents = builtins.readFile download;
+      in args.sha256 or (lib.head (lib.strings.splitString " " contents));
+    src = fetchurl { inherit url sha256; };
+  };
 
-  generic = { pname, archive, exes }:
-      { date ? defaultDate, system ? thisSys, ... } @ args:
-      stdenv.mkDerivation rec {
+  generic = { pname, archive, exes }: args: let
+        inherit (dispatchFetch { inherit pname archive; } args)
+          url version src;
+      in stdenv.mkDerivation rec {
     name = "${pname}-${version}";
-    version = "nightly-${date}";
+    inherit version src;
     # TODO meta;
     outputs = [ "out" "doc" ];
-    src = fetch (args // { inherit pname archive system date; });
     nativeBuildInputs = [ rsync ];
     dontStrip = true;
     installPhase = ''
@@ -74,16 +89,16 @@ in rec {
     '';
   };
 
-  rust-std = { date ? defaultDate, system ? thisSys, ... } @ args:
-      stdenv.mkDerivation rec {
-    # Strip install.sh, etc
+  rust-std = args: let
     pname = "rust-std";
-    version = "nightly-${date}";
-    name = "${pname}-${version}-${system}";
-    src = fetch (args // {
-      inherit pname date system;
+    inherit (dispatchFetch {
+      inherit pname;
       archive = "https://static.rust-lang.org/dist";
-    });
+    } args) url system version src;
+  in stdenv.mkDerivation rec {
+    # Strip install.sh, etc
+    inherit pname version src;
+    name = "${pname}-${version}-${system}";
     installPhase = ''
       mkdir -p $out
       mv ./*/* $out/
