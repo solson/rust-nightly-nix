@@ -90,21 +90,21 @@ in rec {
   };
 
   rust-std = args: let
-    pname = "rust-std";
-    inherit (dispatchFetch {
-      inherit pname;
-      archive = "https://static.rust-lang.org/dist";
-    } args) url system version src;
-  in stdenv.mkDerivation rec {
-    # Strip install.sh, etc
-    inherit pname version src;
-    name = "${pname}-${version}-${system}";
-    installPhase = ''
-      mkdir -p $out
-      mv ./*/* $out/
-      rm $out/manifest.in
-    '';
-  };
+      pname = "rust-std";
+      inherit (dispatchFetch {
+        inherit pname;
+        archive = "https://static.rust-lang.org/dist";
+      } args) url system version src;
+    in stdenv.mkDerivation rec {
+      # Strip install.sh, etc
+      inherit pname version src;
+      name = "${pname}-${version}-${system}";
+      installPhase = ''
+        mkdir -p $out
+        mv ./*/* $out/
+        rm $out/manifest.in
+      '';
+    };
 
   cargo = generic {
     pname = "cargo";
