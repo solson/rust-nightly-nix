@@ -41,10 +41,12 @@ let
     src = fetchurl { inherit url sha256; };
   };
 
-  generic = { pname, archive, exes }: args: let
-        inherit (dispatchFetch { inherit pname archive; } args)
-          url version src;
-      in stdenv.mkDerivation rec {
+  generic = { pname, archive, exes }: args: patchBin {
+    inherit pname exes;
+    inherit (dispatchFetch { inherit pname archive; } args) version src;
+  };
+
+  patchBin = { pname, version, src, exes }: stdenv.mkDerivation rec {
     name = "${pname}-${version}";
     inherit version src;
     # TODO meta;
