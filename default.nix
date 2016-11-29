@@ -21,6 +21,10 @@ let
       url = "${archive}/${date}/${pname}-nightly-${system}.tar.gz";
       version = "nightly-${date}";
     };
+    beta = { version }: {
+      url = "${archive}/beta/${pname}-${version}-${system}.tar.gz";
+      fullVersion = "beta-${version}";
+    };
     stable = { version }: {
       url = "${archive}/${pname}-${version}-${system}.tar.gz";
       version = "stable-${version}";
