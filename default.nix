@@ -23,7 +23,7 @@ let
       url = mkUrl { inherit (args) pname archive date system; };
       download = builtins.fetchurl (url + ".sha256");
       contents = builtins.readFile download;
-      sha256 = args.hash or lib.head (lib.strings.splitString " " contents);
+      sha256 = args.hash or (lib.head (lib.strings.splitString " " contents));
     in fetchurl { inherit url sha256; };
 
   generic = { pname, archive, exes }:
