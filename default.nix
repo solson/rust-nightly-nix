@@ -1,6 +1,6 @@
-{ stdenv, lib, buildEnv, makeWrapper, runCommand, fetchurl, zlib, rsync }:
+{ stdenv, lib, buildEnv, makeWrapper, runCommand, fetchurl, zlib, rsync, ... } @ args:
 
-# rustc and cargo nightly binaries
+# rustc and cargo binaries
 
 let
   convertPlatform = system:
@@ -12,12 +12,23 @@ let
 
   thisSys = convertPlatform stdenv.system;
 
+  channel = if (args.stableVersion or null) != null then "stable" else "nightly";
+  stableVersion =
+    if channel == "stable"
+    then args.stableVersion
+    else (abort "rust-nightly-nix: impossible");
+
   defaultDateFile = builtins.fetchurl
-    "https://static.rust-lang.org/dist/channel-rust-nightly-date.txt";
+    "https://static.rust-lang.org/dist/channel-rust-${channel}-date.txt";
   defaultDate = lib.removeSuffix "\n" (builtins.readFile defaultDateFile);
 
   mkUrl = { pname, archive, date, system }:
-    "${archive}/${date}/${pname}-nightly-${system}.tar.gz";
+    if channel == "nightly" then
+      "${archive}/${date}/${pname}-${channel}-${system}.tar.gz"
+    else if channel == "stable" then
+      "${archive}/${pname}-${stableVersion}-${system}.tar.gz"
+    else
+      (abort "rust-nightly-nix: impossible");
 
   fetch = args: let
       url = mkUrl { inherit (args) pname archive date system; };
@@ -30,7 +41,7 @@ let
       { date ? defaultDate, system ? thisSys, ... } @ args:
       stdenv.mkDerivation rec {
     name = "${pname}-${version}";
-    version = "nightly-${date}";
+    version = "${channel}-${date}";
     # TODO meta;
     outputs = [ "out" "doc" ];
     src = fetch (args // { inherit pname archive system date; });
@@ -78,7 +89,7 @@ in rec {
       stdenv.mkDerivation rec {
     # Strip install.sh, etc
     pname = "rust-std";
-    version = "nightly-${date}";
+    version = "${channel}-${date}";
     name = "${pname}-${version}-${system}";
     src = fetch (args // {
       inherit pname date system;
