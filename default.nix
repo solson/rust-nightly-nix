@@ -1,4 +1,4 @@
-{ stdenv, lib, buildEnv, makeWrapper, runCommand, fetchurl, zlib, rsync }:
+{ stdenv, lib, buildEnv, makeWrapper, runCommand, fetchurl, zlib, rsync, curl }:
 
 # rustc and cargo nightly binaries
 
@@ -41,7 +41,7 @@ let
     '';
     preFixup = if stdenv.isLinux then let
       # it's overkill, but fixup will prune
-      rpath = "$out/lib:" + lib.makeLibraryPath [ zlib stdenv.cc.cc.lib ];
+      rpath = "$out/lib:" + lib.makeLibraryPath [ zlib stdenv.cc.cc.lib curl ];
     in ''
       for executable in ${lib.concatStringsSep " " exes}; do
         patchelf \
