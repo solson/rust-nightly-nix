@@ -93,7 +93,7 @@ in rec {
 
   cargo = generic {
     pname = "cargo";
-    archive = "https://static.rust-lang.org/cargo-dist";
+    archive = "https://static.rust-lang.org/dist";
     exes = [ "cargo" ];
   };
 
