@@ -31,6 +31,7 @@ let
       stdenv.mkDerivation rec {
     name = "${pname}-${version}";
     version = "nightly-${date}";
+    preferLocalBuild = true;
     # TODO meta;
     outputs = [ "out" "doc" ];
     src = fetch (args // { inherit pname archive system date; });
