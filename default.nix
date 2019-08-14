@@ -1,4 +1,4 @@
-{ stdenv, lib, buildEnv, makeWrapper, runCommand, fetchurl, zlib, rsync, curl }:
+{ stdenv, lib, buildEnv, makeWrapper, runCommand, fetchurl, zlib, rsync, autoPatchelfHook }:
 
 # rustc and cargo nightly binaries
 
@@ -26,7 +26,7 @@ let
       sha256 = args.hash or (lib.head (lib.strings.splitString " " contents));
     in fetchurl { inherit url sha256; };
 
-  generic = { pname, archive, exes }:
+  generic = { pname, archive }:
       { date ? defaultDate, system ? thisSys, ... } @ args:
       stdenv.mkDerivation rec {
     name = "${pname}-${version}";
@@ -35,34 +35,14 @@ let
     # TODO meta;
     outputs = [ "out" "doc" ];
     src = fetch (args // { inherit pname archive system date; });
-    nativeBuildInputs = [ rsync ];
+    nativeBuildInputs = [ rsync autoPatchelfHook ];
     dontStrip = true;
     installPhase = ''
       rsync --chmod=u+w -r ./*/ $out/
     '';
-    preFixup = if stdenv.isLinux then let
-      # it's overkill, but fixup will prune
-      rpath = "$out/lib:" + lib.makeLibraryPath [ zlib stdenv.cc.cc.lib curl ];
-    in ''
-      for executable in ${lib.concatStringsSep " " exes}; do
-        patchelf \
-          --interpreter "$(< $NIX_CC/nix-support/dynamic-linker)" \
-          --set-rpath "${rpath}" \
-          "$out/bin/$executable"
-      done
-      for library in $out/lib/*.so; do
-        patchelf --set-rpath "${rpath}" "$library"
-      done
-    '' else "";
   };
 
 in rec {
-  rustc = generic {
-    pname = "rustc";
-    archive = "https://static.rust-lang.org/dist";
-    exes = [ "rustc" "rustdoc" ];
-  };
-
   rustcWithSysroots = { rustc, sysroots ? [] }: buildEnv {
     name = "combined-sysroots";
     paths = [ rustc ] ++ sysroots;
@@ -92,15 +72,8 @@ in rec {
     '';
   };
 
-  cargo = generic {
-    pname = "cargo";
-    archive = "https://static.rust-lang.org/dist";
-    exes = [ "cargo" ];
-  };
-
   rust = generic {
     pname = "rust";
     archive = "https://static.rust-lang.org/dist";
-    exes = [ "rustc" "rustdoc" "cargo" ];
   };
 }
